@@ -11,6 +11,7 @@ import java.awt.Graphics;
  */
 public class Car implements Comparable{
 
+
     //step and time step when make a car object
     //variables with accessors
     public double carSpeed;

@@ -8,6 +8,8 @@ import java.util.ArrayList;
  * @author carlr_000
  */
 public class Driver {
+    
+
 
     public double prefSpeed = 70;
     private int wantToMerge = 0;
@@ -224,28 +226,65 @@ public class Driver {
 
     }
 
-    public static class AggressiveDriver extends Driver {
+    private static class AggressiveDriver extends Driver {
 
         public AggressiveDriver(Road r, Car car, double timeStep) {
-            
             super(r, car, timeStep);
             myColor = Color.RED;
-            setPrefSpeed(80);
+            setPrefSpeed(Math.random()*10+75);
         }
     }
+    
+    private static class DistanceDriver extends Driver {
 
-    public static class AccidentDriver extends Driver {
-
-        public AccidentDriver(Road r, Car car, double timeStep, double loc, double lane) {
+        public DistanceDriver(Road r, Car car, double timeStep) {
             super(r, car, timeStep);
-            setPrefSpeed(0);
+            myColor = Color.GREEN;
+            setPrefSpeed(Math.random()*10+ 65);
 
         }
 
         public boolean wantToMerge() {
+            Car nextCar = getNextCarUpInMyLane();
+            if (nextCar == null) {
+                return false;
+            }
+            double diff = nextCar.getCarLoc() - myCar.getCarLoc();
+            double carLengths = diff / nextCar.getCarLength();
+            //check if want to merge
+            if (carLengths < 15) {
+
+                Car up = getNextCarUp(myCar.getCarLane() + 1);
+                Car down = getNextCarUp(myCar.getCarLane() - 1);
+                if (up == null || down == null) {
+                    return true;
+                }
+                double diffUp = up.getCarLoc() - myCar.getCarLoc();
+                double diffDown = up.getCarLoc() - myCar.getCarLoc();
+                double max = Math.max(diffUp, diffDown);
+                if (max > diff) {
+                    return true;
+                }
+                return false;
+            }
             return false;
         }
-
     }
 
+    private static class PassiveDriver extends Driver{
+    public PassiveDriver(Road r, Car car, double timeStep) {
+        super(r, car, timeStep);
+        setPrefSpeed(Math.random()*10+ 55);
+        myColor = Color.GRAY;
+
+    }
+    @Override
+    public boolean wantToMerge()
+    {
+        return false;
+    }
+    
+}
+
+    
 }

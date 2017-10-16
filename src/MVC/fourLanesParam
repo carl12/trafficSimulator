@@ -1,0 +1,10 @@
+FOUR LANES SCENARIO
+300 - duration
+4 - num lanes
+100 - vehicles/minute
+1 - aggressive
+1 - average
+1 - distance
+1 - passive
+1000 - view start
+0 - view width

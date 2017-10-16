@@ -1,0 +1,18 @@
+
+ ----------------------------------------
+
+DISTANCE DRIVER SCENARIO	Params!
+		duration=300
+		numLanes=3
+		vehiclesPerMinute=100
+		aggD=1.0
+		avgD=1.0
+		distD=4.0
+		passiveD=1.0
+		viewStart=1000
+		viewWidth=100000
+
+prefSpeed: 0.20958083832335328
+below prefSpeed: 0.562874251497006
+avg Speed: 45.240984602389574
+Percent stopped: 0.18962075848303392

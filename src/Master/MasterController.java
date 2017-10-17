@@ -1,7 +1,7 @@
 package Master;
 
 import MVC.GenericMVC_Controller;
-import MVC.MyView;
+import MVC.MyView2;
 import MVC.ViewFrame;
 import MVC.Statistics;
 import io.MyReader;
@@ -23,7 +23,7 @@ public class MasterController {
     ScenarioList list;
     String fileList = "src/Master/paramFiles";
     String statFile = "src/Master/statList";
-    MyView theView;
+    MyView2 theView;
 
     MasterController() {
 

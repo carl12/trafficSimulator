@@ -8,15 +8,15 @@ public class ViewFrame extends javax.swing.JFrame {
 
     /** Creates new form PendulaFrame */
     public ViewFrame() {
-        add(new MyView(this));
+        add(new MyView2(this));
         initComponents();
         setSize(800,800);
         setVisible(true);
         
     }
-    MyView v;
+    MyView2 v;
     public ViewFrame(GenericMVC_Controller c) {
-        v = new MyView(this,c);
+        v = new MyView2(this,c);
         add(v);
         initComponents();
         setSize(800,800);
@@ -25,14 +25,14 @@ public class ViewFrame extends javax.swing.JFrame {
     }
     public ViewFrame(boolean a)
     {
-        v = new MyView(this,a);
+        v = new MyView2(this,a);
         add(v);
         initComponents();
         setSize(800,800);
         setVisible(true);
-        this.setTitle("Car Simulator");
+        this.setTitle("Traffic Simulator");
     }
-    public MyView getView()
+    public MyView2 getView()
     {
         return v;
     }

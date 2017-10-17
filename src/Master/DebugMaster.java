@@ -1,7 +1,7 @@
 package Master;
 
 import MVC.GenericMVC_Controller;
-import MVC.MyView;
+import MVC.MyView2;
 import MVC.ViewFrame;
 import io.MyReader;
 
@@ -12,7 +12,7 @@ import io.MyReader;
 public class DebugMaster {
     public static void main(String[] args) {
         ViewFrame a = new ViewFrame(false);
-        MyView theView = a.getView();
+        MyView2 theView = a.getView();
         ScenarioList list = new ScenarioList();
         String fileList = "src/Master/paramFiles";
         MyReader mr = new MyReader(fileList);

@@ -1,4 +1,4 @@
-/build/
-/nbproject/
+build/
+nbproject/
 /src/statList
 /src/Master/statList

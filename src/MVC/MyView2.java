@@ -14,19 +14,18 @@ import java.util.LinkedList;
  */
 public class MyView2 extends javax.swing.JPanel implements Viewable {
 
-     GenericMVC_Controller theController;
+    GenericMVC_Controller theController;
     Params params;
     Road theRoad;
     JFrame theFrame;
     ArrayList<Car> theCarList;
-    int edge=800;
-    int roadWidth=75;
-    int leftView=0;
-    int zoom=1000;
-    int rightView=leftView+zoom;
+    int edge = 800;
+    int roadWidth = 75;
+    int leftView = 0;
+    int zoom = 1000;
+    int rightView = leftView + zoom;
     boolean hasMC;
     private Statistics stats;
-    
 
     /**
      * Creates new form PendulaPanel
@@ -43,7 +42,7 @@ public class MyView2 extends javax.swing.JPanel implements Viewable {
         System.out.println("theRoad = " + theRoad);
         //theController.toggleRunning();
     }
-    
+
     public MyView2(ViewFrame f, GenericMVC_Controller c) {
         hasMC = true;
         initComponents();
@@ -52,25 +51,24 @@ public class MyView2 extends javax.swing.JPanel implements Viewable {
         theRoad = theController.getRoad();
         setCarList(theRoad.getCarList());
         theController.start();
-        
+
         //theRoad.doStuff();
         System.out.println("theRoad = " + theRoad);
         //theController.toggleRunning();
     }
-    public MyView2(ViewFrame f, boolean val)
-    {
+
+    public MyView2(ViewFrame f, boolean val) {
         initComponents();
         theFrame = f;
-        
+
     }
-    public void setController(GenericMVC_Controller c)
-    {
+
+    public void setController(GenericMVC_Controller c) {
         hasMC = true;
         theController = c;
         theRoad = theController.getRoad();
         setCarList(theRoad.getCarList());
     }
-    
 
     /**
      * repaint the Frame which will cause paintComponent to be sent with the
@@ -85,78 +83,74 @@ public class MyView2 extends javax.swing.JPanel implements Viewable {
      *
      * @param g
      */
-    
-     public void paintComponent(Graphics g){
-         
-      edge = (int)getVisibleRect().getWidth();
-    g.setColor(Color.green);
-    g.fillRect(0, 200, edge, 200);
-    int y=250;
-    addLane( y,g);
-    this.jTextField2.setText(zoom+"");
-    this.jTextField1.setText(leftView+"");
-    this.timeText.setText(Math.round(theRoad.time)+"");
-    if(stats != null)
-    {
-        int averageSpeed = (int)Math.round(stats.getLastSpeed());
-        double prefSpeed = roundTenths(stats.getLastPrefSpeed());
-        double lessPref = roundTenths(stats.getLastLessPref());
-        double stopped = roundTenths(stats.getLastStoped());
-        
-        avgSpeedText.setText(averageSpeed+"");
-        this.ratioNearText.setText(prefSpeed+"");
-        this.ratioSlowText.setText(lessPref+"");
-        this.ratioStoppedText.setText(stopped+"");
-//
-//        g.setFont(new Font("Arial",Font.PLAIN, 20));
-//        g.drawString("Time: " + Math.round(theRoad.time)+"", 300, 150);
-        g.setFont(new Font("Arial",Font.PLAIN,40));
-        g.drawString("Traffic Simulator", 250, 100);
+    public void paintComponent(Graphics g) {
+
+        edge = (int) getVisibleRect().getWidth();
+        g.setColor(Color.green);
+        g.fillRect(0, 200, edge, 200);
+        int y = 250;
+        addLane(y, g);
+        this.jTextField2.setText(zoom + "");
+        this.jTextField1.setText(leftView + "");
+        this.timeText.setText(Math.round(theRoad.time) + "");
+        if (stats != null) {
+            int averageSpeed = (int) Math.round(stats.getLastSpeed());
+            double prefSpeed = roundTenths(stats.getLastPrefSpeed());
+            double lessPref = roundTenths(stats.getLastLessPref());
+            double stopped = roundTenths(stats.getLastStoped());
+
+            avgSpeedText.setText(averageSpeed + "");
+            this.ratioNearText.setText(prefSpeed + "");
+            this.ratioSlowText.setText(lessPref + "");
+            this.ratioStoppedText.setText(stopped + "");
+
+            g.setColor(Color.BLACK);
+            g.setFont(new Font("Arial", Font.PLAIN, 40));
+            g.drawString("Traffic Simulator", 250, 100);
+        }
+
+        paintCars(g);
     }
-    //addLane(y+150,g);
-   
-   paintCars(g);
-}
-     private double roundTenths(double in){
-         return Math.round(in*100)/100.0;
-        
-     }
+
+    private double roundTenths(double in) {
+        return Math.round(in * 100) / 100.0;
+
+    }
 
     void setCarList(ArrayList<Car> thelist) {
-        theCarList=thelist;
+        theCarList = thelist;
     }
 
     private void paintCars(Graphics g) {
         g.setColor(Color.red);
-        if(hasMC)
-        {
-            for(int i = 0; i < theCarList.size();i++)
-        {
-            Car next = theCarList.get(i);
-            if (next.getCarLoc()>leftView &&next.getCarLoc()<rightView){
-            int x = (int)(next.carLoc);
-            
-            next.paint((x-leftView)*edge/(rightView-leftView),270 +(int)(next.carLane*10),edge/(rightView-leftView+1.0),g);
+        if (hasMC) {
+            for (int i = 0; i < theCarList.size(); i++) {
+                Car next = theCarList.get(i);
+                if (next.getCarLoc() > leftView && next.getCarLoc() < rightView) {
+                    int x = (int) (next.carLoc);
+
+                    next.paint((x - leftView) * edge / (rightView - leftView), 270 + (int) (next.carLane * 10), edge / (rightView - leftView + 1.0), g);
+                }
             }
         }
-        }
-        
-            
-        
 
-        
     }
 
     private void addLane(int y, Graphics g) {
-            Color roadColor = Color.BLACK;
-    Color lineColor = Color.YELLOW;
+        Color roadColor = Color.BLACK;
+        Color lineColor = Color.YELLOW;
         g.setColor(roadColor);
-    g.fillRect(0, y, edge, roadWidth);
-   // g.setColor(lineColor);
-   // for(int i=0;i<10;i++){
-  //      g.fillRect(i*80, y+30, 20, 10);
-  //  }
+        g.fillRect(0, y, edge, roadWidth);
+        g.setColor(lineColor);
+        for(int j = 1; j < theRoad.numLane; j++){
+            for (int i = 0; i < 200; i++) {
+            g.fillRect(i * 20, y+10*j +24, 10, 1);
+        }
+        }
+        
+        
     }
+
     /**
      * This method is called from within the constructor to initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is always
@@ -326,24 +320,23 @@ public class MyView2 extends javax.swing.JPanel implements Viewable {
                     .addComponent(viewSlider, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addGroup(layout.createSequentialGroup()
                         .addGap(46, 46, 46)
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(selectViewButton)
-                            .addGroup(layout.createSequentialGroup()
-                                .addComponent(jLabel5)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addComponent(jTextField1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))))
+                        .addComponent(selectViewButton))
                     .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                         .addComponent(widthSlider, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                            .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                .addGroup(layout.createSequentialGroup()
-                                    .addGap(10, 10, 10)
-                                    .addComponent(widthButton))
-                                .addGroup(layout.createSequentialGroup()
-                                    .addComponent(jLabel6)
-                                    .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                    .addComponent(jTextField2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                            .addGap(54, 54, 54))))
+                            .addGap(10, 10, 10)
+                            .addComponent(widthButton)
+                            .addGap(54, 54, 54))
+                        .addGroup(layout.createSequentialGroup()
+                            .addGap(57, 57, 57)
+                            .addComponent(jLabel6)
+                            .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                            .addComponent(jTextField2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                    .addGroup(layout.createSequentialGroup()
+                        .addGap(33, 33, 33)
+                        .addComponent(jLabel5)
+                        .addGap(18, 18, 18)
+                        .addComponent(jTextField1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
                 .addGap(66, 66, 66))
         );
         layout.setVerticalGroup(
@@ -401,7 +394,7 @@ public class MyView2 extends javax.swing.JPanel implements Viewable {
     }//GEN-LAST:event_stepButtonActionPerformed
 
     private void runstopButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_runstopButtonActionPerformed
-                theController.toggleRunning();
+        theController.toggleRunning();
         if (theController.getRunning()) {
             runstopButton.setText("Stop");
         } else {
@@ -410,20 +403,20 @@ public class MyView2 extends javax.swing.JPanel implements Viewable {
     }//GEN-LAST:event_runstopButtonActionPerformed
 
     private void viewSliderStateChanged(javax.swing.event.ChangeEvent evt) {//GEN-FIRST:event_viewSliderStateChanged
-        leftView=5*viewSlider.getValue();
-        rightView= leftView+zoom;
+        leftView = 5 * viewSlider.getValue();
+        rightView = leftView + zoom;
         theFrame.repaint();
     }//GEN-LAST:event_viewSliderStateChanged
 
     private void widthSliderStateChanged(javax.swing.event.ChangeEvent evt) {//GEN-FIRST:event_widthSliderStateChanged
-                       zoom=widthSlider.getValue(); 
-       rightView= leftView+zoom;
+        zoom = widthSlider.getValue();
+        rightView = leftView + zoom;
         theFrame.repaint();
     }//GEN-LAST:event_widthSliderStateChanged
 
     private void selectViewButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_selectViewButtonActionPerformed
-        leftView=Integer.parseInt( JOptionPane.showInputDialog("Input Road View"));
-        rightView =leftView+zoom;
+        leftView = Integer.parseInt(JOptionPane.showInputDialog("Input Road View"));
+        rightView = leftView + zoom;
         theFrame.repaint();
     }//GEN-LAST:event_selectViewButtonActionPerformed
 
@@ -436,12 +429,12 @@ public class MyView2 extends javax.swing.JPanel implements Viewable {
     }//GEN-LAST:event_jTextField1ActionPerformed
 
     private void widthButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_widthButtonActionPerformed
-        zoom=Integer.parseInt( JOptionPane.showInputDialog("Input View Width"));
+        zoom = Integer.parseInt(JOptionPane.showInputDialog("Input View Width"));
         System.out.println("zoom = " + zoom);
         int sliderSet = zoom;
         widthSlider.setValue(sliderSet);
         System.out.println("zoom = " + zoom);
-        rightView= leftView+zoom;
+        rightView = leftView + zoom;
         theFrame.repaint();
     }//GEN-LAST:event_widthButtonActionPerformed
 
@@ -450,9 +443,9 @@ public class MyView2 extends javax.swing.JPanel implements Viewable {
     }//GEN-LAST:event_widthSliderKeyReleased
 
     private void widthSliderMouseReleased(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_widthSliderMouseReleased
-               zoom=widthSlider.getValue(); 
-       rightView= leftView+zoom;
-        theFrame.repaint();        
+        zoom = widthSlider.getValue();
+        rightView = leftView + zoom;
+        theFrame.repaint();
     }//GEN-LAST:event_widthSliderMouseReleased
 
     private void viewSliderMouseReleased(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_viewSliderMouseReleased

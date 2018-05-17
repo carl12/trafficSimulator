@@ -1,4 +1,4 @@
-# trafficSimulator
+# Traffic Simulator
 Traffic simulation viewed through GUI
 
 Different car colors are driven by different drivers 

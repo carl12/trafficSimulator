@@ -11,7 +11,7 @@ import Master.Params;
 public class GenericMVC_Controller extends Thread {
 
     private boolean running = false;
-    public MyView2 theView;
+    public MyView theView;
     public Params params;
     public double time;
     public double maxTime;
@@ -20,7 +20,7 @@ public class GenericMVC_Controller extends Thread {
     public Road theRoad;
     private boolean stepping;
 
-    public GenericMVC_Controller(MyView2 theView, Params params) {
+    public GenericMVC_Controller(MyView theView, Params params) {
         this.params = params;
         this.theView = theView;
         theRoad = new Road(.1, params);
@@ -29,7 +29,7 @@ public class GenericMVC_Controller extends Thread {
         System.out.println("asdfasdf");
     }
 
-    public GenericMVC_Controller(MyView2 theView, Params params, boolean keepStats) {
+    public GenericMVC_Controller(MyView theView, Params params, boolean keepStats) {
         this.params = params;
         this.theView = theView;
         theRoad = new Road(.1, params);

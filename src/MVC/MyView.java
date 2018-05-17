@@ -14,19 +14,18 @@ import java.util.LinkedList;
  */
 public class MyView extends javax.swing.JPanel implements Viewable {
 
-     GenericMVC_Controller theController;
+    GenericMVC_Controller theController;
     Params params;
     Road theRoad;
     JFrame theFrame;
     ArrayList<Car> theCarList;
-    int edge=800;
-    int roadWidth=75;
-    int leftView=0;
-    int zoom=1000;
-    int rightView=leftView+zoom;
+    int edge = 800;
+    int roadWidth = 75;
+    int leftView = 0;
+    int zoom = 1000;
+    int rightView = leftView + zoom;
     boolean hasMC;
     private Statistics stats;
-    
 
     /**
      * Creates new form PendulaPanel
@@ -43,7 +42,7 @@ public class MyView extends javax.swing.JPanel implements Viewable {
         System.out.println("theRoad = " + theRoad);
         //theController.toggleRunning();
     }
-    
+
     public MyView(ViewFrame f, GenericMVC_Controller c) {
         hasMC = true;
         initComponents();
@@ -52,25 +51,24 @@ public class MyView extends javax.swing.JPanel implements Viewable {
         theRoad = theController.getRoad();
         setCarList(theRoad.getCarList());
         theController.start();
-        
+
         //theRoad.doStuff();
         System.out.println("theRoad = " + theRoad);
         //theController.toggleRunning();
     }
-    public MyView(ViewFrame f, boolean val)
-    {
+
+    public MyView(ViewFrame f, boolean val) {
         initComponents();
         theFrame = f;
-        
+
     }
-    public void setController(GenericMVC_Controller c)
-    {
+
+    public void setController(GenericMVC_Controller c) {
         hasMC = true;
         theController = c;
         theRoad = theController.getRoad();
         setCarList(theRoad.getCarList());
     }
-    
 
     /**
      * repaint the Frame which will cause paintComponent to be sent with the
@@ -85,194 +83,403 @@ public class MyView extends javax.swing.JPanel implements Viewable {
      *
      * @param g
      */
-    
-     public void paintComponent(Graphics g){
-         
-      edge = (int)getVisibleRect().getWidth();
-    g.setColor(Color.green);
-    g.fillRect(0, 200, edge, 200);
-    int y=250;
-    addLane( y,g);
-    if(stats != null)
-    {
-        g.drawString("Avg speed: " + Math.round(stats.getLastSpeed())+"", 100, 500);
-        g.drawString("Ratio near prefered speed: "+stats.getLastPrefSpeed()+"", 100, 600);
-        g.drawString("Ratio much lower than prefered speed: " + stats.getLastLessPref()+"", 500, 500);
-        g.drawString("Ratio stoped: " +stats.getLastStoped()+"", 500, 600);
-        g.setFont(new Font("Arial",Font.PLAIN, 20));
-        g.drawString("Time: " + Math.round(theRoad.time)+"", 300, 150);
-        g.setFont(new Font("Arial",Font.PLAIN,40));
-        g.drawString("Traffic Simulator", 250, 700);
+    public void paintComponent(Graphics g) {
+
+        edge = (int) getVisibleRect().getWidth();
+        g.setColor(Color.green);
+        g.fillRect(0, 200, edge, 200);
+        int y = 250;
+        addLane(y, g);
+        this.jTextField2.setText(zoom + "");
+        this.jTextField1.setText(leftView + "");
+        this.timeText.setText(Math.round(theRoad.time) + "");
+        if (stats != null) {
+            int averageSpeed = (int) Math.round(stats.getLastSpeed());
+            double prefSpeed = roundTenths(stats.getLastPrefSpeed());
+            double lessPref = roundTenths(stats.getLastLessPref());
+            double stopped = roundTenths(stats.getLastStoped());
+
+            avgSpeedText.setText(averageSpeed + "");
+            this.ratioNearText.setText(prefSpeed + "");
+            this.ratioSlowText.setText(lessPref + "");
+            this.ratioStoppedText.setText(stopped + "");
+
+            g.setColor(Color.BLACK);
+            g.setFont(new Font("Arial", Font.PLAIN, 40));
+            g.drawString("Traffic Simulator", 250, 100);
+        }
+
+        paintCars(g);
     }
-    //addLane(y+150,g);
-   
-   paintCars(g);
-}
+
+    private double roundTenths(double in) {
+        return Math.round(in * 100) / 100.0;
+
+    }
 
     void setCarList(ArrayList<Car> thelist) {
-        theCarList=thelist;
+        theCarList = thelist;
     }
 
     private void paintCars(Graphics g) {
         g.setColor(Color.red);
-        if(hasMC)
-        {
-            for(int i = 0; i < theCarList.size();i++)
-        {
-            Car next = theCarList.get(i);
-            if (next.getCarLoc()>leftView &&next.getCarLoc()<rightView){
-            int x = (int)(next.carLoc);
-            
-            next.paint((x-leftView)*edge/(rightView-leftView),270 +(int)(next.carLane*10),edge/(rightView-leftView+1.0),g);
+        if (hasMC) {
+            for (int i = 0; i < theCarList.size(); i++) {
+                Car next = theCarList.get(i);
+                if (next.getCarLoc() > leftView && next.getCarLoc() < rightView) {
+                    int x = (int) (next.carLoc);
+
+                    next.paint((x - leftView) * edge / (rightView - leftView), 270 + (int) (next.carLane * 10), edge / (rightView - leftView + 1.0), g);
+                }
             }
         }
-        }
-        
-            
-        
 
-        
     }
 
     private void addLane(int y, Graphics g) {
-            Color roadColor = Color.BLACK;
-    Color lineColor = Color.YELLOW;
+        Color roadColor = Color.BLACK;
+        Color lineColor = Color.YELLOW;
         g.setColor(roadColor);
-    g.fillRect(0, y, edge, roadWidth);
-   // g.setColor(lineColor);
-   // for(int i=0;i<10;i++){
-  //      g.fillRect(i*80, y+30, 20, 10);
-  //  }
+        g.fillRect(0, y, edge, roadWidth);
+        g.setColor(lineColor);
+        for(int j = 1; j < theRoad.numLane; j++){
+            for (int i = 0; i < 200; i++) {
+            g.fillRect(i * 20, y+10*j +24, 10, 1);
+        }
+        }
+        
+        
     }
 
+    /**
+     * This method is called from within the constructor to initialize the form.
+     * WARNING: Do NOT modify this code. The content of this method is always
+     * regenerated by the Form Editor.
+     */
     @SuppressWarnings("unchecked")
-    // <editor-fold defaultstate="collapsed" desc="Generated Code">                          
+    // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
-        jButton1 = new javax.swing.JButton();
         stepButton = new javax.swing.JButton();
         runstopButton = new javax.swing.JButton();
-        theSlider = new javax.swing.JSlider();
-        SelectViewButton = new javax.swing.JButton();
-        zoomSlider = new javax.swing.JSlider();
+        viewSlider = new javax.swing.JSlider();
+        widthSlider = new javax.swing.JSlider();
+        selectViewButton = new javax.swing.JButton();
+        ratioSlowText = new javax.swing.JTextField();
+        avgSpeedText = new javax.swing.JTextField();
+        ratioNearText = new javax.swing.JTextField();
+        ratioStoppedText = new javax.swing.JTextField();
+        jLabel1 = new javax.swing.JLabel();
+        jLabel2 = new javax.swing.JLabel();
+        jLabel3 = new javax.swing.JLabel();
+        jLabel4 = new javax.swing.JLabel();
+        jLabel5 = new javax.swing.JLabel();
+        jTextField1 = new javax.swing.JTextField();
+        jTextField2 = new javax.swing.JTextField();
+        jLabel6 = new javax.swing.JLabel();
+        jLabel7 = new javax.swing.JLabel();
+        timeText = new javax.swing.JTextField();
+        widthButton = new javax.swing.JButton();
 
-        jButton1.setText("jButton1");
-
-        addMouseMotionListener(new java.awt.event.MouseMotionAdapter() {
-            public void mouseDragged(java.awt.event.MouseEvent evt) {
-                formMouseDragged(evt);
-            }
-        });
-        addMouseListener(new java.awt.event.MouseAdapter() {
-            public void mouseReleased(java.awt.event.MouseEvent evt) {
-                formMouseReleased(evt);
-            }
-        });
-        setLayout(null);
-
-        stepButton.setText("step");
+        stepButton.setText("Step");
         stepButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 stepButtonActionPerformed(evt);
             }
         });
-        add(stepButton);
-        stepButton.setBounds(295, 14, 75, 29);
 
-        runstopButton.setText("run/stop");
+        runstopButton.setText("Go/Stop");
         runstopButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 runstopButtonActionPerformed(evt);
             }
         });
-        add(runstopButton);
-        runstopButton.setBounds(295, 55, 100, 29);
 
-        theSlider.setMaximum(3000);
-        theSlider.setMinimum(0);
-        theSlider.addChangeListener(new javax.swing.event.ChangeListener() {
+        viewSlider.setMaximum(3000);
+        viewSlider.addChangeListener(new javax.swing.event.ChangeListener() {
             public void stateChanged(javax.swing.event.ChangeEvent evt) {
-                theSliderStateChanged(evt);
+                viewSliderStateChanged(evt);
             }
         });
-        add(theSlider);
-        theSlider.setBounds(40, 390, 320, 29);
+        viewSlider.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseReleased(java.awt.event.MouseEvent evt) {
+                viewSliderMouseReleased(evt);
+            }
+        });
 
-        SelectViewButton.setText("Select View");
-        SelectViewButton.addActionListener(new java.awt.event.ActionListener() {
+        widthSlider.setMaximum(5000);
+        widthSlider.setMinimum(800);
+        widthSlider.addChangeListener(new javax.swing.event.ChangeListener() {
+            public void stateChanged(javax.swing.event.ChangeEvent evt) {
+                widthSliderStateChanged(evt);
+            }
+        });
+        widthSlider.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mousePressed(java.awt.event.MouseEvent evt) {
+                widthSliderMousePressed(evt);
+            }
+            public void mouseReleased(java.awt.event.MouseEvent evt) {
+                widthSliderMouseReleased(evt);
+            }
+        });
+        widthSlider.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyReleased(java.awt.event.KeyEvent evt) {
+                widthSliderKeyReleased(evt);
+            }
+        });
+
+        selectViewButton.setText("Select View");
+        selectViewButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                SelectViewButtonActionPerformed(evt);
+                selectViewButtonActionPerformed(evt);
             }
         });
-        add(SelectViewButton);
-        SelectViewButton.setBounds(40, 420, 120, 29);
 
-        zoomSlider.setMaximum(5000);
-        zoomSlider.setMinimum(800);
-        zoomSlider.addChangeListener(new javax.swing.event.ChangeListener() {
-            public void stateChanged(javax.swing.event.ChangeEvent evt) {
-                zoomSliderStateChanged(evt);
+        ratioSlowText.setEditable(false);
+        ratioSlowText.setText("muchLower");
+
+        avgSpeedText.setEditable(false);
+        avgSpeedText.setText("avgSpeed");
+        avgSpeedText.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                avgSpeedTextActionPerformed(evt);
             }
         });
-        add(zoomSlider);
-        zoomSlider.setBounds(430, 390, 200, 29);
-    }// </editor-fold>                        
 
-    private void stepButtonActionPerformed(java.awt.event.ActionEvent evt) {                                           
+        ratioNearText.setEditable(false);
+        ratioNearText.setText("near");
+
+        ratioStoppedText.setEditable(false);
+        ratioStoppedText.setText("stopped");
+
+        jLabel1.setText("Average Speed");
+
+        jLabel2.setText("Ratio Slow");
+
+        jLabel3.setText("Ratio Good");
+
+        jLabel4.setText("Ratio Stopped");
+
+        jLabel5.setText("Left View");
+
+        jTextField1.setEditable(false);
+        jTextField1.setText("jTextField1");
+        jTextField1.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jTextField1ActionPerformed(evt);
+            }
+        });
+
+        jTextField2.setEditable(false);
+        jTextField2.setText("jTextField2");
+
+        jLabel6.setText("Width");
+
+        jLabel7.setText("Time:");
+
+        timeText.setEditable(false);
+        timeText.setText("time");
+
+        widthButton.setText("Select Width");
+        widthButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                widthButtonActionPerformed(evt);
+            }
+        });
+
+        javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
+        this.setLayout(layout);
+        layout.setHorizontalGroup(
+            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(layout.createSequentialGroup()
+                .addGap(64, 64, 64)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                    .addComponent(jLabel2)
+                    .addComponent(jLabel3)
+                    .addComponent(jLabel4)
+                    .addComponent(jLabel1))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(avgSpeedText, javax.swing.GroupLayout.PREFERRED_SIZE, 126, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(ratioStoppedText, javax.swing.GroupLayout.PREFERRED_SIZE, 126, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(ratioNearText, javax.swing.GroupLayout.PREFERRED_SIZE, 126, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(ratioSlowText, javax.swing.GroupLayout.PREFERRED_SIZE, 126, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(layout.createSequentialGroup()
+                        .addGap(67, 67, 67)
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(stepButton, javax.swing.GroupLayout.PREFERRED_SIZE, 79, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(runstopButton)))
+                    .addGroup(layout.createSequentialGroup()
+                        .addGap(51, 51, 51)
+                        .addComponent(jLabel7)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(timeText, javax.swing.GroupLayout.PREFERRED_SIZE, 39, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 105, Short.MAX_VALUE)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(viewSlider, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addGroup(layout.createSequentialGroup()
+                        .addGap(46, 46, 46)
+                        .addComponent(selectViewButton))
+                    .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                        .addComponent(widthSlider, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                            .addGap(10, 10, 10)
+                            .addComponent(widthButton)
+                            .addGap(54, 54, 54))
+                        .addGroup(layout.createSequentialGroup()
+                            .addGap(57, 57, 57)
+                            .addComponent(jLabel6)
+                            .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                            .addComponent(jTextField2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                    .addGroup(layout.createSequentialGroup()
+                        .addGap(33, 33, 33)
+                        .addComponent(jLabel5)
+                        .addGap(18, 18, 18)
+                        .addComponent(jTextField1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                .addGap(66, 66, 66))
+        );
+        layout.setVerticalGroup(
+            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(layout.createSequentialGroup()
+                .addContainerGap(511, Short.MAX_VALUE)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                                    .addComponent(avgSpeedText, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                    .addComponent(jLabel1)
+                                    .addComponent(jLabel7)
+                                    .addComponent(timeText, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                                    .addComponent(ratioSlowText, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                    .addComponent(jLabel2)))
+                            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                                .addComponent(viewSlider, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                                    .addComponent(jLabel5)
+                                    .addComponent(jTextField1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(selectViewButton)))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                            .addComponent(ratioNearText, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(jLabel3))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED))
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                        .addComponent(stepButton)
+                        .addGap(19, 19, 19)))
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                        .addComponent(ratioStoppedText, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addComponent(jLabel4)
+                        .addComponent(runstopButton))
+                    .addGroup(layout.createSequentialGroup()
+                        .addComponent(widthSlider, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                            .addComponent(jTextField2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(jLabel6))))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(widthButton)
+                .addGap(79, 79, 79))
+        );
+    }// </editor-fold>//GEN-END:initComponents
+
+    private void stepButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_stepButtonActionPerformed
         theController.setStep();
-    }                                          
+    }//GEN-LAST:event_stepButtonActionPerformed
 
-    private void runstopButtonActionPerformed(java.awt.event.ActionEvent evt) {                                              
+    private void runstopButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_runstopButtonActionPerformed
         theController.toggleRunning();
         if (theController.getRunning()) {
             runstopButton.setText("Stop");
         } else {
             runstopButton.setText("Go!");
         }
+    }//GEN-LAST:event_runstopButtonActionPerformed
 
-    }                                             
-
-    private void formMouseReleased(java.awt.event.MouseEvent evt) {                                   
-
-    }                                  
-
-    private void formMouseDragged(java.awt.event.MouseEvent evt) {                                  
-
-    }                                 
-
-    private void theSliderStateChanged(javax.swing.event.ChangeEvent evt) {                                       
-        leftView=5*theSlider.getValue();
-        rightView= leftView+zoom;
+    private void viewSliderStateChanged(javax.swing.event.ChangeEvent evt) {//GEN-FIRST:event_viewSliderStateChanged
+        leftView = 5 * viewSlider.getValue();
+        rightView = leftView + zoom;
         theFrame.repaint();
-    }                                      
+    }//GEN-LAST:event_viewSliderStateChanged
 
-    private void SelectViewButtonActionPerformed(java.awt.event.ActionEvent evt) {                                                 
-    leftView=Integer.parseInt( JOptionPane.showInputDialog("Input Road View"));
-        rightView =leftView+zoom;
+    private void widthSliderStateChanged(javax.swing.event.ChangeEvent evt) {//GEN-FIRST:event_widthSliderStateChanged
+        zoom = widthSlider.getValue();
+        rightView = leftView + zoom;
         theFrame.repaint();
-    }                                                
+    }//GEN-LAST:event_widthSliderStateChanged
 
-    private void zoomSliderStateChanged(javax.swing.event.ChangeEvent evt) {                                        
-        zoom=zoomSlider.getValue(); 
-       rightView= leftView+zoom;
+    private void selectViewButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_selectViewButtonActionPerformed
+        leftView = Integer.parseInt(JOptionPane.showInputDialog("Input Road View"));
+        rightView = leftView + zoom;
         theFrame.repaint();
-    }                                       
+    }//GEN-LAST:event_selectViewButtonActionPerformed
+
+    private void avgSpeedTextActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_avgSpeedTextActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_avgSpeedTextActionPerformed
+
+    private void jTextField1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jTextField1ActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_jTextField1ActionPerformed
+
+    private void widthButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_widthButtonActionPerformed
+        zoom = Integer.parseInt(JOptionPane.showInputDialog("Input View Width"));
+        System.out.println("zoom = " + zoom);
+        int sliderSet = zoom;
+        widthSlider.setValue(sliderSet);
+        System.out.println("zoom = " + zoom);
+        rightView = leftView + zoom;
+        theFrame.repaint();
+    }//GEN-LAST:event_widthButtonActionPerformed
+
+    private void widthSliderKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_widthSliderKeyReleased
+
+    }//GEN-LAST:event_widthSliderKeyReleased
+
+    private void widthSliderMouseReleased(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_widthSliderMouseReleased
+        zoom = widthSlider.getValue();
+        rightView = leftView + zoom;
+        theFrame.repaint();
+    }//GEN-LAST:event_widthSliderMouseReleased
+
+    private void viewSliderMouseReleased(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_viewSliderMouseReleased
+
+    }//GEN-LAST:event_viewSliderMouseReleased
+
+    private void widthSliderMousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_widthSliderMousePressed
+
+    }//GEN-LAST:event_widthSliderMousePressed
 
 
-    // Variables declaration - do not modify                     
-    private javax.swing.JButton SelectViewButton;
-    private javax.swing.JButton jButton1;
+    // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JTextField avgSpeedText;
+    private javax.swing.JLabel jLabel1;
+    private javax.swing.JLabel jLabel2;
+    private javax.swing.JLabel jLabel3;
+    private javax.swing.JLabel jLabel4;
+    private javax.swing.JLabel jLabel5;
+    private javax.swing.JLabel jLabel6;
+    private javax.swing.JLabel jLabel7;
+    private javax.swing.JTextField jTextField1;
+    private javax.swing.JTextField jTextField2;
+    private javax.swing.JTextField ratioNearText;
+    private javax.swing.JTextField ratioSlowText;
+    private javax.swing.JTextField ratioStoppedText;
     private javax.swing.JButton runstopButton;
+    private javax.swing.JButton selectViewButton;
     private javax.swing.JButton stepButton;
-    private javax.swing.JSlider theSlider;
-    private javax.swing.JSlider zoomSlider;
-    // End of variables declaration                   
-
-    void setStats(Statistics stats) {
+    private javax.swing.JTextField timeText;
+    private javax.swing.JSlider viewSlider;
+    private javax.swing.JButton widthButton;
+    private javax.swing.JSlider widthSlider;
+    // End of variables declaration//GEN-END:variables
+        void setStats(Statistics stats) {
         this.stats = stats;
     }
-
 }
-
-
-

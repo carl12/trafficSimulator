@@ -1,0 +1,10 @@
+AGGRESSIVE DRIVER SCENARIO
+300 - duration
+3 - num lanes
+100 - vehicles/minute
+4
+1
+1
+1
+1000 - view start
+100000 - view width
